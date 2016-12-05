@@ -7,10 +7,8 @@
 
 [CmdletBinding()]
 param(
-		[Parameter(Mandatory=$false)]
 		$scriptsPath = (Split-Path $MyInvocation.MyCommand.Path -Parent),
         $toolsPath = (Join-Path $scriptsPath "\tools\")
-	
     )
 
 function UpdateInvokeBuild  {
@@ -25,7 +23,6 @@ function UpdateInvokeBuild  {
     Push-Location 
     try {
         Set-Location  $toolsPath 
-        #& {$((New-Object Net.WebClient).DownloadString('https://github.com/nightroman/PowerShelf/raw/master/Save-NuGetTool.ps1'))} ib
         Invoke-Expression "& {$((New-Object Net.WebClient).DownloadString('https://github.com/nightroman/PowerShelf/raw/master/Save-NuGetTool.ps1'))} Invoke-Build"
         Rename-Item -path $ibDirTmp -newname "ib"
         Remove-Item $ibTmpFile -Force
@@ -33,8 +30,6 @@ function UpdateInvokeBuild  {
     finally {
         Pop-Location
     }
-  
-
     
 }
 
