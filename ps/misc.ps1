@@ -24,25 +24,7 @@ Function Assert {
     }
 }
 
-Function Create-Dir ($path){
 
-	if((Test-Path $path) -eq 0)
-	{
-			mkdir $final_local | out-null;
-    }
-}
-Function Ensure-DirExistsAndIsEmpty ($path){
-
-	if((Test-Path $path) -eq 0)
-	{
-			mkdir $path | out-null;
-    } 
-	else 
-	{
-		rd $path -rec -force | out-null
-		mkdir $path | out-null;
-	}
-}
 Function Patch-AssemblyInfo {
     Param(
         [Parameter(Mandatory=$true)][string]$assemblyInfoFilePath,
