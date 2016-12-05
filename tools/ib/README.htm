@@ -8,18 +8,20 @@
   <style type="text/css">code{white-space: pre;}</style>
 </head>
 <body>
-<h2><img src="https://raw.githubusercontent.com/nightroman/Invoke-Build/master/ib.png" /> Build Automation in PowerShell</h2>
-<p>Invoke-Build is a build and test automation tool which invokes tasks defined in PowerShell v2.0+ scripts. It is similar to psake but arguably easier to use and more powerful.</p>
+<p><img src="https://raw.githubusercontent.com/nightroman/Invoke-Build/master/ib.png" align="right"/> <a href="https://www.nuget.org/packages/Invoke-Build"><img src="https://buildstats.info/nuget/Invoke-Build" alt="NuGet" /></a></p>
+<h2>Build Automation in PowerShell</h2>
+<p>Invoke-Build is a build and test automation tool which invokes tasks defined in PowerShell v2.0+ scripts. It is similar to psake but arguably easier to use and more powerful. It is complete, bug free, well covered by tests.</p>
 <p>In addition to basic task processing the engine supports</p>
 <ul>
 <li>Incremental tasks with effectively processed inputs and outputs.</li>
 <li>Persistent builds which can be resumed after interruptions.</li>
-<li>Parallel builds as a part of another with common stats.</li>
+<li>Parallel builds in separate workspaces with common stats.</li>
 <li>Batch invocation of tests composed as tasks.</li>
 <li>Ability to define new classes of tasks.</li>
 </ul>
-<p>Invoke-Build can be used as a task runner in VSCode with tasks maintained in a PowerShell build script instead of <em>tasks.json</em>, see <em>New-VSCodeTask.ps1</em>.</p>
-<p>Invoke-Build can invoke the current task from a build script being composed in ISE, see <em>Invoke-TaskFromISE.ps1</em>.</p>
+<p>Invoke-Build can invoke the current task from a build script being composed in ISE and VSCode, see <em>Invoke-TaskFromISE.ps1</em> and <em>Invoke-TaskFromVSCode.ps1</em>.</p>
+<p>Invoke-Build can be used as the task runner in VSCode with tasks maintained in a PowerShell build script instead of <em>tasks.json</em>, see <em>New-VSCodeTask.ps1</em>.</p>
+<p>Invoke-Build v3.0.1 is cross-platform with PowerShell v6.0.0-alpha.</p>
 <h2>The package</h2>
 <p>The standalone script <em>Invoke-Build.ps1</em> is enough for invoking build scripts. It can be downloaded directly from the repository and used alone right away. The package also includes helper scripts and the generated help file:</p>
 <ul>
@@ -28,14 +30,18 @@
 <li><em>Invoke-Build-Help.xml</em> - external content for Get-Help</li>
 <li><em>ib.cmd</em> - Invoke-Build helper for cmd.exe</li>
 </ul>
-<p>Extra tools are available at the project repository:</p>
+<p>Extra tools, see PSGallery and the repository:</p>
+<ul>
+<li><em>Invoke-Build.ArgumentCompleters.ps1</em> - completers for v5 native, TabExpansionPlusPlus, TabExpansion2.ps1</li>
+<li><em>Invoke-TaskFromISE.ps1</em> - invokes a task from a build script opened in ISE</li>
+<li><em>Invoke-TaskFromVSCode.ps1</em> - invokes a task from a build script opened in VSCode</li>
+<li><em>New-VSCodeTask.ps1</em> - generates VSCode tasks bound to build script tasks</li>
+</ul>
+<p>And some more tools, see the repository:</p>
 <ul>
 <li><em>Convert-psake.ps1</em> - converts psake build scripts</li>
-<li><em>Invoke-TaskFromISE.ps1</em> - invokes a task from ISE</li>
-<li><em>New-VSCodeTask.ps1</em> - generates VSCode tasks</li>
 <li><em>Show-BuildTree.ps1</em> - shows task trees as text</li>
 <li><em>Show-BuildGraph.ps1</em> - shows task trees by Graphviz</li>
-<li><em>TabExpansionProfile.Invoke-Build.ps1</em> - code completers</li>
 </ul>
 <h2>Install as module</h2>
 <p>Invoke-Build is distributed as the module <a href="https://www.powershellgallery.com/packages/InvokeBuild">InvokeBuild</a>. In PowerShell 5.0 or with PowerShellGet you can install it by this command</p>
@@ -69,8 +75,11 @@
 <li><a href="https://github.com/nightroman/Invoke-Build/wiki/Build-Scripts-in-Projects">Examples</a> : Build scripts used in various projects.</li>
 <li><a href="https://github.com/nightroman/Invoke-Build/tree/master/Tasks">Tasks</a> : Samples, patterns, and various techniques.</li>
 </ul>
-<p>Questions, suggestions, and issues are welcome at <a href="https://groups.google.com/forum/#!forum/invoke-build">Google Discussion Group</a> and <a href="https://github.com/nightroman/Invoke-Build/issues">Project Issues</a>. Or just hit me up on Twitter <a href="https://twitter.com/romkuzmin">@romkuzmin</a></p>
+<p>Questions, suggestions, and issues are welcome at <a href="https://groups.google.com/forum/#!forum/invoke-build">Google Group</a> and <a href="https://github.com/nightroman/Invoke-Build/issues">Project Issues</a>. Or just hit me up on Twitter <a href="https://twitter.com/romkuzmin">@romkuzmin</a></p>
 <h2>Credits</h2>
-<p>The project was inspired by <a href="https://github.com/psake/psake"><em>psake</em></a>. Some concepts came from <a href="https://github.com/Microsoft/msbuild"><em>MSBuild</em></a>.</p>
+<ul>
+<li>The project was inspired by <a href="https://github.com/psake/psake"><em>psake</em></a>, see <a href="https://github.com/nightroman/Invoke-Build/wiki/Comparison-with-psake">Comparison with psake</a>.</li>
+<li>Some concepts came from <a href="https://github.com/Microsoft/msbuild"><em>MSBuild</em></a>, see <a href="https://github.com/nightroman/Invoke-Build/wiki/Comparison-with-MSBuild">Comparison with MSBuild</a>.</li>
+</ul>
 </body>
 </html>

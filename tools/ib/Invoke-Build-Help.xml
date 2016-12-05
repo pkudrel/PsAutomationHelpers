@@ -20,6 +20,20 @@ To get help for commands dot-source Invoke-Build:
     PS&gt; . Invoke-Build
     PS&gt; help task -full
 
+USING BUILD SCRIPT PARAMETERS
+
+Build scripts define parameters using param(). They are used in tasks as
+$ParameterName for reading and as $script:ParameterName for writing.
+
+The following parameter names are reserved for the engine:
+Task, File, Result, Safe, Summary, WhatIf, Checkpoint, Resume, Log
+
+Script parameters are specified for Invoke-Build as if they are its own.
+Known issue #4. Script switches should be specified after Task and File.
+
+Build script parameters are automatically exported and imported by the
+engine on persistent builds, see Checkpoint.
+
 RESERVED FUNCTION AND VARIABLE NAMES
 
 Function and variable names starting with &apos;*&apos; are reserved for the engine.
@@ -66,9 +80,8 @@ Exposed variables designed for build scripts and tasks:
     $BuildTask - initial tasks
     $Task      - current task
 
-$Task is available for the task script blocks defined by parameters If,
-Inputs, Outputs, Jobs, and the event functions Enter|Exit-BuildTask and
-Enter|Exit-BuildJob.
+$Task is available for script blocks defined by task parameters If, Inputs,
+Outputs, and Jobs and by events Enter|Exit-BuildTask, Enter|Exit-BuildJob.
 
     $Task properties available for reading:
 
@@ -83,35 +96,32 @@ Enter|Exit-BuildJob.
 The variable $_ may be exposed. In special cases it is used as an input.
 In other cases build scripts should not assume anything about its value.
 
-EVENT FUNCTIONS
+EVENT BLOCKS
 
-The build engine defines and calls the following empty functions:
+Scripts may define the following event blocks. They are invoked:
 
-    Enter-Build     - before all tasks
-    Exit-Build      - after all tasks
+    Enter-Build {} - before all tasks
+    Exit-Build {} - after all tasks
 
-    Enter-BuildTask - before each task
-    Exit-BuildTask  - after each task
+    Enter-BuildTask {} - before each task
+    Exit-BuildTask {} - after each task
 
-    Enter-BuildJob  - before each task script job
-    Exit-BuildJob   - after each task script job
+    Enter-BuildJob {} - before each task action
+    Exit-BuildJob {} - after each task action
 
-    Export-Build    - on saving persistent build checkpoints
-    Import-Build    - once on resuming of a persistent build
+    Export-Build {} - on saving persistent build checkpoints
+    Import-Build {param($data)} - once on resuming persistent builds
 
-A script can redefine them. Note that nested builds do not inherit events,
-the engine always defines new empty functions before invoking a new script.
-
-Events are not called on WhatIf. If Enter-* is called then its pair Exit-*
-is called, too. Events are suitable for initializing, cleaning, logging.
+Events are not called on WhatIf.
+Nested builds do not inherit parent events.
+If Enter-X is called then Exit-X is called.
 
 Enter-Build and Exit-Build are invoked in the script scope. Enter-Build is
 a good place for heavy initialization, it does not have to care of WhatIf.
-Also, unlike the top level script code, Enter-Build can output/log data.
+Also, unlike the top level script code, Enter-Build can output text.
 
 Enter-BuildTask, Exit-BuildTask, Enter-BuildJob, and Exit-BuildJob are
-invoked in the same scope, the parent of a task. *Job functions take a
-single argument, the job number.
+invoked in the same scope, the parent of task action blocks.
 
 Export-Build and Import-Build are used with persistent builds. Export-Build
 outputs data to be exported to clixml. Import-Build is called with a single
@@ -153,10 +163,6 @@ help and not designed for use in normal scripts.</maml:para>
 <command:parameter required="false" position="2" >
 <maml:name>File</maml:name>
 <command:parameterValue required="true">String</command:parameterValue>
-</command:parameter>
-<command:parameter required="false" position="3" >
-<maml:name>Parameters</maml:name>
-<command:parameterValue required="true">Hashtable</command:parameterValue>
 </command:parameter>
 <command:parameter required="false" position="named" >
 <maml:name>Checkpoint</maml:name>
@@ -221,36 +227,13 @@ Tasks ? and ?? can be combined with **
 
 If it is not specified then Invoke-Build looks for *.build.ps1 files in
 the current location. A single file is used as the script. If there are
-more files then .build.ps1 is used.
+more files then .build.ps1 is used if it exists, otherwise build fails.
 
 If the build file is not found then a script defined by the environment
-variable InvokeBuildGetFile is called with the path as an argument. It
-may get a non standard build file. The full path should be returned.
+variable InvokeBuildGetFile is called with the path as an argument. For
+this location it may return the full path of a special build script.
 
-If the file is still not defined then parent directories are searched.</maml:para>
-</maml:description>
-</command:parameter>
-<command:parameter required="false" position="3" >
-<maml:name>Parameters</maml:name>
-<maml:description>
-<maml:para>A hashtable of parameters passed in the build script. It is needed only
-in special cases. Normally build script parameters may be specified for
-Invoke-Build itself, thanks to PowerShell dynamic parameters.
-
-Dynamic parameters and the hashtable Parameters are not used together.
-If build script parameters conflict with Invoke-Build parameters then
-the hashtable Parameters is the only way to pass them in the script.
-
-Build scripts define parameters using standard syntax. Parameters are
-shared between tasks: for reading as $ParameterName, for writing as
-$script:ParameterName.
-
-Build script parameters are automatically exported and imported by the
-engine on persistent builds, see Checkpoint.
-
-NOTE: Dynamic switches must be specified after positional arguments of
-Task and File if they are used with omitted parameter names. Otherwise
-switches swallow these arguments and make a command incorrect.</maml:para>
+If the file is still not found then parent directories are searched.</maml:para>
 </maml:description>
 </command:parameter>
 <command:parameter required="false" position="named" >
@@ -262,11 +245,11 @@ task. The checkpoint file is written before processing of each task
 and deleted if the build succeeds.
 
 In order to resume an interrupted persistent build specify the same
-checkpoint file and the switch Resume. Task, File, Parameters are
-ignored, their values are restored from the file.
+checkpoint file and the switch Resume. Task, File, and build script
+parameters should not be used, they are restored from the file.
 
-Persistent builds must be designed properly. Data shared by tasks are
-exported and imported by the functions Export-Build and Import-Build.
+Persistent builds must be designed properly. Data shared by tasks
+may have to be persisted with Export-Build and Import-Build.
 
 Note that this is not needed for script parameters, the engine takes
 care of them. Some variables may be declared as parameters simply in
@@ -323,8 +306,8 @@ Other result and task data should not be used.</maml:para>
 <maml:name>Resume</maml:name>
 <maml:description>
 <maml:para>Tells to resume an interrupted persistent build from a checkpoint file
-specified by Checkpoint. Task, File, and Parameters are ignored, their
-values are restored from the file.</maml:para>
+specified by Checkpoint. Task, File, and build script parameters should
+not be used, they are restored from the file.</maml:para>
 </maml:description>
 </command:parameter>
 <command:parameter required="false" position="named" >
@@ -382,9 +365,9 @@ Invoke-Build</dev:code>
 <command:example>
 <maml:title>-------------------------- EXAMPLE 2 --------------------------</maml:title>
 <dev:code># Invoke tasks Build and Test from the default script with parameters.
-# The script defines parameters Log and WarningLevel by &apos;param&apos; as usual.
+# The script defines parameters Output and WarningLevel by param().
 
-Invoke-Build Build, Test -Log log.txt -WarningLevel 4</dev:code>
+Invoke-Build Build, Test -Output log.txt -WarningLevel 4</dev:code>
 </command:example>
 <command:example>
 <maml:title>-------------------------- EXAMPLE 3 --------------------------</maml:title>
@@ -623,14 +606,29 @@ It is mostly designed for wrapper functions creating special tasks.</maml:para>
 <maml:name>If</maml:name>
 <maml:description>
 <maml:para>Specifies the optional condition to be evaluated. If the condition
-evaluates to false then the task is not invoked.
+evaluates to false then the task is not invoked. The condition is
+defined in one of two ways depending on the requirements.
 
-The value is a script block evaluated on task invocation or an object
-treated as Boolean on definition. On WhatIf a script block is treated
-as true without invocation.
+Using standard Boolean notation (parenthesis) the condition will only
+be evaluated when the task is loaded into the build engine. A use case
+for this notation might be evaluating parameters that are passed into
+the build.
 
-If the task is called several times then it is possible that the task
-is skipped at first but invoked later when the script block gets true.</maml:para>
+    Example:
+        task SomeTask -If ($SomeCondition) {...}
+
+Using script block notation (curly braces) the condition will be
+evaluated dynamically on task invocation. If a task is referenced by
+several tasks then the condition is evaluated each time until it gets
+true and the task is invoked. The script block notation is normally
+used for a condition that may be defined or changed during the build.
+
+    Example:
+        task SomeTask -If {$SomeCondition} {...}
+
+On WhatIf:
+- Boolean conditions are evaluated and treated accordingly.
+- Script block conditions are treated as true without invocation.</maml:para>
 </maml:description>
 <dev:defaultValue>$true</dev:defaultValue>
 </command:parameter>
@@ -1218,14 +1216,14 @@ If the current host does not support colors then just text is written.</maml:par
 <command:details>
 <command:name>Get-BuildFile</command:name>
 <maml:description>
-<maml:para>Gets full path of the default build file in a directory.</maml:para>
+<maml:para>Gets full path of the default build file.</maml:para>
 </maml:description>
 <command:verb>Get</command:verb>
 <command:noun>BuildFile</command:noun>
 </command:details>
 <maml:description>
-<maml:para>This function is not designed for build scripts and tasks. It is used
-internally and exists only as a pattern to follow for wrapper scripts.</maml:para>
+<maml:para>This function is not designed for build scripts and tasks.
+It is used by the engine and exposed for related tools.</maml:para>
 </maml:description>
 <command:syntax>
 <command:syntaxItem>
@@ -1291,7 +1289,7 @@ limited by the number of processors by default.</maml:para>
 <maml:description>
 <maml:para>Build parameters defined as hashtables with these keys/data:
 
-    Task, File, Parameters - Invoke-Build.ps1 parameters
+    Task, File, ... - Invoke-Build.ps1 and script parameters
     Log - Tells to write build output to the specified file
 
 Any number of builds is allowed, including 0 and 1. The maximum number
@@ -1349,7 +1347,7 @@ Result properties:
 	@{File=&apos;Project2.build.ps1&apos;; Task=&apos;MakeHelp&apos;}
 	@{File=&apos;Project2.build.ps1&apos;; Task=&apos;Build&apos;, &apos;Test&apos;}
 	@{File=&apos;Project3.build.ps1&apos;; Log=&apos;C:\TEMP\Project3.log&apos;}
-	@{File=&apos;Project4.build.ps1&apos;; Parameters=@{Configuration=&apos;Release&apos;}}
+	@{File=&apos;Project4.build.ps1&apos;; Configuration=&apos;Release&apos;}
 )</dev:code>
 <dev:remarks>
 <maml:para>Five parallel builds are invoked with various combinations of parameters.
