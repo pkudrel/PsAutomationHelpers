@@ -2,7 +2,7 @@ $scriptPath = ($PSScriptRoot)
 $psgitversionScript =  Join-Path ((get-item $scriptPath ).parent.FullName) ("ps\psgitversion.ps1")
 $miscScript =  Join-Path ((get-item $scriptPath ).parent.FullName) ("ps\misc.ps1")
 
- # tools
+# tools
 . $psgitversionScript
 . $miscScript
 

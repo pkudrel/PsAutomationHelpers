@@ -34,10 +34,10 @@ param(
     )
 
 $ValueNamesToExport =@("repoPath", "configPath", "scriptsPath",
- "toolsPath", "buildEnv", "buildTarget",  "buildPath","buildNumber", "gitCommitNumber",
- "buildDateTime" , "gitBranch", "buildMiscInfo", "buildVersion")
+    "toolsPath", "buildEnv", "buildTarget",  "buildPath","buildNumber", "gitCommitNumber",
+    "buildDateTime" , "gitBranch", "buildMiscInfo", "buildVersion")
 
- # tools
+# tools
 . (Join-Path $helpersPath "ps\misc.ps1")
 . (Join-Path $helpersPath "ps\psgitversion.ps1")
 
@@ -65,13 +65,13 @@ Write-Output "Bulid luncher parms:"
 $parmsToExport.GetEnumerator()| Sort-Object -Property name | Format-Table Name, Value -AutoSize
 
 try {
-        # Invoke the build and keep results in the variable Result
-		& $ib @parmsToExport -File $buildScriptsPath  -Result Result 
-    }
+    # Invoke the build and keep results in the variable Result
+    & $ib @parmsToExport -File $buildScriptsPath  -Result Result 
+}
 catch {
- Write $Result.Error
- Write $_
- exit 1 # Failure
+    Write $Result.Error
+    Write $_
+    exit 1 # Failure
 }
 
 

@@ -7,9 +7,9 @@
 
 [CmdletBinding()]
 param(
-		$scriptsPath = (Split-Path $MyInvocation.MyCommand.Path -Parent),
-        $toolsPath = (Join-Path $scriptsPath "\tools\")
-    )
+    $scriptsPath = (Split-Path $MyInvocation.MyCommand.Path -Parent),
+    $toolsPath = (Join-Path $scriptsPath "\tools\")
+)
 
 function UpdateInvokeBuild  {
     Write-Host "Update InvokeBuild"
@@ -17,7 +17,7 @@ function UpdateInvokeBuild  {
     $ibDirTmp = (Join-Path $toolsPath "\Invoke-Build\")
     $ibTmpFile = (Join-Path $toolsPath "Invoke-Build.zip")
     If (Test-Path $ibDir){
-         Remove-Item $ibDir -Force -Recurse
+        Remove-Item $ibDir -Force -Recurse
     
     }
     Push-Location 
@@ -33,4 +33,4 @@ function UpdateInvokeBuild  {
     
 }
 
- UpdateInvokeBuild
+UpdateInvokeBuild

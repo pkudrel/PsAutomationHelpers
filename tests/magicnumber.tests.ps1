@@ -3,7 +3,7 @@ $scriptPath = ($PSScriptRoot)
 $magicNumberScript =  Join-Path ((get-item $scriptPath ).parent.FullName) ("ps\magicnumber.ps1")
 $miscScript =  Join-Path ((get-item $scriptPath ).parent.FullName) ("ps\misc.ps1")
 
- # tools
+# tools
 . $magicNumberScript
 . $miscScript
 
