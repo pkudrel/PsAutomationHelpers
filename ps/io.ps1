@@ -1,7 +1,7 @@
 Function CreateDir ($path){
 
     if((Test-Path $path) -eq 0) {
-        mkdir $final_local | out-null;
+        mkdir $path | out-null;
     }
 }
 
