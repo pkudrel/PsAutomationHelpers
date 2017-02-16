@@ -24,7 +24,6 @@ function UpdateAssemblyInfo {
 
 }
 
-
 function PatchAssemblyInfo {
     Param(
         [Parameter(Mandatory=$true)][string]$assemblyInfoFilePath,
