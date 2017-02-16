@@ -17,7 +17,7 @@ function UpdateAssemblyInfo {
     foreach ($item in $items) {
         $dir = Split-Path  $item -parent
         $f2 = "$item.temporary-beckup-file"
-        Copy-Item -Path $item -Destination "$dir\$f2"
+        Copy-Item -Path $item -Destination $f2
         PatchAssemblyInfo $item $assemblyVersion $assemblyFileVersion $assemblyInformationalVersion $productName $copyright $companyName
     }
 
