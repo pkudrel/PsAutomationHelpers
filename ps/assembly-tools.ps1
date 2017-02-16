@@ -2,7 +2,6 @@
 function UpdateAssemblyInfo {
     Param(
         [Parameter(Mandatory=$true)][string]$workDir,
-        [Parameter(Mandatory=$true)][string]$currentAssemblyInfo,
 
         [Parameter(Mandatory=$true)][string]$assemblyVersion,
         [Parameter(Mandatory=$true)][string]$assemblyFileVersion,
@@ -19,7 +18,7 @@ function UpdateAssemblyInfo {
         $dir = Split-Path  $item -parent
         $f2 = "$item.temporary-beckup-file"
         Copy-Item -Path $item -Destination "$dir\$f2"
-        PatchAssemblyInfo $item  $assemblyVersion $assemblyFileVersion $assemblyInformationalVersion $productName $copyright $companyName
+        PatchAssemblyInfo $item $assemblyVersion $assemblyFileVersion $assemblyInformationalVersion $productName $copyright $companyName
     }
 
 
