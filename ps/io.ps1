@@ -1,4 +1,4 @@
-Function CreateDir ($path){
+Function EnsureDirExists ($path){
 
     if((Test-Path $path) -eq 0) {
         mkdir $path | out-null;
