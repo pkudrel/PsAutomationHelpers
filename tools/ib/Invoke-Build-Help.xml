@@ -51,6 +51,7 @@ Scripts should use available aliases instead of function names.
     Get-BuildVersion
     Invoke-BuildExec (exec)
     New-BuildJob (job)
+    Resolve-MSBuild
     Use-BuildAlias (use)
     Write-Build
     Write-Warning [1]
@@ -271,11 +272,12 @@ assigned (e.g. [ref] or [hashtable]).
 
 Result object properties:
 
-    All - all defined tasks
+    All - all available tasks
     Error - a terminating build error
     Tasks - invoked tasks including nested
     Errors - error objects including nested
-    Warnings - warning messages including nested
+    Warnings - warning objects including nested
+    Redefined - list of original redefined tasks
 
 Tasks is a list of objects:
 
@@ -463,6 +465,9 @@ finally {
 <maml:linkText>New-BuildJob (job)</maml:linkText>
 </maml:navigationLink>
 <maml:navigationLink>
+<maml:linkText>Resolve-MSBuild</maml:linkText>
+</maml:navigationLink>
+<maml:navigationLink>
 <maml:linkText>Use-BuildAlias (use)</maml:linkText>
 </maml:navigationLink>
 <maml:navigationLink>
@@ -639,24 +644,23 @@ On WhatIf:
 and requires the parameter Outputs with the optional switch Partial.
 
 Inputs are file items or paths or a script block which gets them.
-Outputs are file paths or a script block which gets them.
 
-Automatic variables for incremental task script jobs:
+Outputs are file paths or a script block which gets them.
+A script block is invoked with input paths piped to it.
+
+Automatic variables for incremental task actions:
 
     $Inputs - full input paths, array of strings
-    $Outputs - result of the evaluated parameter Outputs
+    $Outputs - result of the evaluated Outputs
 
 With the switch Partial the task is processed as partial incremental.
 There must be one-to-one correspondence between Inputs and Outputs.
 
-Partial Outputs are file paths or a script block which is invoked with
-input paths piped to it in order to transform them into output paths.
+Partial task actions often contain &quot;process {}&quot; blocks.
+Two more automatic variables are available for them:
 
-In addition to automatic variables $Inputs and $Outputs, inside
-process{} blocks of a partial task two more variables are defined:
-
-    $_ - current full input path
-    $2 - current output path
+    $_ - full path of an input item
+    $2 - corresponding output path
 
 See also wiki topics about incremental tasks:
 https://github.com/nightroman/Invoke-Build/wiki</maml:para>
@@ -665,8 +669,9 @@ https://github.com/nightroman/Invoke-Build/wiki</maml:para>
 <command:parameter required="false" position="named" >
 <maml:name>Outputs</maml:name>
 <maml:description>
-<maml:para>Specifies the output paths of the incremental task. It is used together
-with Inputs. See Inputs for details.</maml:para>
+<maml:para>Specifies the output paths of the incremental task, either directly on
+task creation or as a script block invoked with the task. It is used
+together with Inputs. See Inputs for more details.</maml:para>
 </maml:description>
 </command:parameter>
 <command:parameter required="false" position="named" >
@@ -913,9 +918,12 @@ comparison use &apos;assert (X -eq Y)&apos;.</maml:para>
 <command:noun>BuildProperty</command:noun>
 </command:details>
 <maml:description>
-<maml:para>Scripts use its alias &apos;property&apos;. It gets the first not null value of these
-three: session variable, environment variable, optional default value.
-Otherwise an error is thrown.
+<maml:para>Scripts use its alias &apos;property&apos;. The command returns:
+
+    - PowerShell variable value if it is not $null or &apos;&apos;
+    - environment variable if it is not $null or &apos;&apos;
+    - default value if it is not $null
+    - error
 
 CAUTION: Properties should be used sparingly with carefully chosen names
 that unlikely can already exist and be not related to the build script.</maml:para>
@@ -937,7 +945,7 @@ that unlikely can already exist and be not related to the build script.</maml:pa
 <command:parameter required="true" position="1" >
 <maml:name>Name</maml:name>
 <maml:description>
-<maml:para>Session or environment variable name.</maml:para>
+<maml:para>Specifies the session or environment variable name.</maml:para>
 </maml:description>
 </command:parameter>
 <command:parameter required="false" position="2" >
@@ -1100,13 +1108,7 @@ scope where it is called from.
 
 This function is often called from a build script and all tasks use script
 scope aliases. But it can be called from tasks in order to use more tools
-including other framework or tool directories.
-
-MSBuild is one of frequently used tools. Examples:
-
-    use * MSBuild
-    use 4.0 MSBuild
-    use Framework\v2.0.50727 MSBuild</maml:para>
+including other framework or tool directories.</maml:para>
 </maml:description>
 <command:syntax>
 <command:syntaxItem>
@@ -1128,22 +1130,28 @@ MSBuild is one of frequently used tools. Examples:
 <maml:para>Specifies the tools directory.
 
 If it is * or it starts with digits followed by a dot then the MSBuild
-version and the path is taken from the registry. The * is used for the
-latest available version.
+path is resolved using the package script Resolve-MSBuild.ps1. Build
+scripts may invoke it directly by the provided alias Resolve-MSBuild.
 
 If it is like Framework* then it is assumed to be a path relative to
 Microsoft.NET in the Windows directory.
 
+If it is like VisualStudio\&lt;version&gt; then it is resolved to the
+specified Visual Studio tools directory (devenv, mstest, tf, ...).
+NOTE: This way is not supported starting with Visual Studio 2017,
+use the special Microsoft module VSSetup from PSGallery instead.
+
 Otherwise it is a full or relative literal path of any directory.
 
-Examples: *, 4.0, Framework\v4.0.30319, .\Tools</maml:para>
+Examples: *, 4.0, Framework\v4.0.30319, VisualStudio\14.0, .\Tools</maml:para>
 </maml:description>
 </command:parameter>
 <command:parameter required="false" position="2" >
 <maml:name>Name</maml:name>
 <maml:description>
-<maml:para>Tool names to set aliases for. These names also become aliases and they
-should be used later exactly as specified in here.</maml:para>
+<maml:para>Specifies the tool names. They become aliases in the current scope.
+If it is a build script then the aliases are created for all tasks.
+If it is a task then the aliases are available just for this task.</maml:para>
 </maml:description>
 </command:parameter>
 </command:parameters>
@@ -1159,6 +1167,9 @@ exec { MSBuild Some.csproj /t:Build /p:Configuration=Release }</dev:code>
 <maml:relatedLinks>
 <maml:navigationLink>
 <maml:linkText>Invoke-BuildExec</maml:linkText>
+</maml:navigationLink>
+<maml:navigationLink>
+<maml:linkText>Resolve-MSBuild</maml:linkText>
 </maml:navigationLink>
 </maml:relatedLinks>
 </command:command>
