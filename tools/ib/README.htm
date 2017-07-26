@@ -19,9 +19,8 @@
 <li>Batch invocation of tests composed as tasks.</li>
 <li>Ability to define new classes of tasks.</li>
 </ul>
-<p>Invoke-Build can invoke the current task from a build script being composed in ISE and VSCode, see <em>Invoke-TaskFromISE.ps1</em> and <em>Invoke-TaskFromVSCode.ps1</em>.</p>
-<p>Invoke-Build can be used as the task runner in VSCode with tasks maintained in a PowerShell build script instead of <em>tasks.json</em>, see <em>New-VSCodeTask.ps1</em>.</p>
-<p>Invoke-Build v3.0.1 is cross-platform with PowerShell v6.0.0-alpha.</p>
+<p>Invoke-Build v3.0.1+ is cross-platform with PowerShell v6.</p>
+<p>Invoke-Build can be effectively used in VSCode and ISE.</p>
 <h2>The package</h2>
 <p>The package includes the engine, helpers, and the generated help:</p>
 <ul>
@@ -64,7 +63,7 @@
 <pre><code>Set-Alias ib &lt;path&gt;\Invoke-Build.ps1</code></pre>
 <p><code>&lt;path&gt;\</code> may be omitted if the script is in the path.</p>
 <h2>Getting help</h2>
-<p>If you are using the module (see <a href="https://github.com/PowerShell/PowerShell/issues/2899">#2899</a>) or the script is not in the path then use the full path to <em>Invoke-Build.ps1</em> instead of <em>Invoke-Build</em> in the below commands.</p>
+<p>If you are using the module (see <a href="https://github.com/PowerShell/PowerShell/issues/2899">#2899</a>) or the script is not in the path then use the full path to <em>Invoke-Build.ps1</em> instead of <em>Invoke-Build</em> in the below commands, see <code>(Get-Alias Invoke-Build).Definition</code></p>
 <p>In order to get help for the engine, invoke:</p>
 <pre><code>help Invoke-Build -full</code></pre>
 <p>In order to get help for internal commands:</p>
