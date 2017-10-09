@@ -11,7 +11,7 @@ function IbUpdateIsNeeded {
 
     if ([System.IO.File]::Exists($ibVersionFilePath))
     {
-        $currentVer =  [System.IO.File]::ReadAllLines($ibVersionFile)[0]
+        $currentVer =  [System.IO.File]::ReadAllLines($ibVersionFilePath)[0]
         $repoVersion = (Invoke-RestMethod -Uri "https://api.github.com/repos/nightroman/Invoke-Build/tags" ) | Select-Object -ExpandProperty Name -First 1
         if($currentVer -eq $repoVersion ){
            Write-Host "Same version on disk and in repostory:  $currentVer"
@@ -24,7 +24,7 @@ function IbUpdateIsNeeded {
         }
 
     } else {
-        "Cannot find IB file version. Path: $ibVersionFile"
+        "Cannot find IB file version. Path: $ibVersionFilePath"
         return $true
     }
 }
