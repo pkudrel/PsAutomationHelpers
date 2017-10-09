@@ -40,7 +40,7 @@ $BL.GetEnumerator()| Sort-Object -Property name | Format-Table Name, Value -Auto
 
 try {
 # Invoke the build and keep results in the variable Result
-& $BL.ib -File $BL.BuildScriptsPath -Result Result  @args
+& $BL.ib -File $BL.BuildScriptPath -Result Result  @args
 }
 catch {
 Write $Result.Error
