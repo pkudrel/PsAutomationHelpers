@@ -39,13 +39,13 @@ Write-Output "Special `$BL values"
 $BL.GetEnumerator()| Sort-Object -Property name | Format-Table Name, Value -AutoSize
 
 try {
-# Invoke the build and keep results in the variable Result
-& $BL.ib -File $BL.BuildScriptPath -Result Result  @args
+	# Invoke the build and keep results in the variable Result
+	& $BL.ib -File $BL.BuildScriptPath -Result Result  @args
 }
 catch {
-Write $Result.Error
-Write $_
-exit 1 # Failure
+	Write $Result.Error
+	Write $_
+	exit 1 # Failure
 }
 
 $Result.Tasks | Format-Table Elapsed, Name -AutoSize
