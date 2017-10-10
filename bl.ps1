@@ -7,12 +7,15 @@
 
 
 param(
-	$File = (Join-Path (Split-Path $MyInvocation.MyCommand.Path -Parent) ".build.ps1"),
+	$file = (Join-Path (Split-Path $MyInvocation.MyCommand.Path -Parent) ".build.ps1"),
+	[parameter(Mandatory=$false)] [int] $major = 0,
+	[parameter(Mandatory=$false)] [int] $minor = 0,
+	[parameter(Mandatory=$false)] [int] $patch = 0,
 	$buildCounter = 0,
 	$psGitVersionStrategy = "standard"
 )
 
-Write-Output "Invoke-Build script file: $File"
+
 
 # 
 $BL = @{}
@@ -20,7 +23,7 @@ $BL.RepoRoot = (Resolve-Path ( & git rev-parse --show-toplevel))
 $BL.BuildDateTime = ((Get-Date).ToUniversalTime().ToString("yyyy-MM-ddTHH:mm:ssZ"))
 $BL.ScriptsPath = (Split-Path $MyInvocation.MyCommand.Path -Parent)
 $BL.BuildOutPath = (Join-Path $BL.RepoRoot ".build" )
-$BL.BuildScriptPath = $File
+$BL.BuildScriptPath = $file
 $BL.PsAutoHelpers = (Join-Path $BL.ScriptsPath "vendor\ps-auto-helpers") 
 $BL.ib = (Join-Path $BL.ScriptsPath "vendor\ps-auto-helpers\tools\ib\Invoke-Build.ps1")
 $BL.ibVersionFile = (Join-Path $BL.ScriptsPath "vendor\ps-auto-helpers\tools\ib-version.txt")
@@ -29,13 +32,13 @@ $BL.ibVersionFile = (Join-Path $BL.ScriptsPath "vendor\ps-auto-helpers\tools\ib-
 . (Join-Path $BL.PsAutoHelpers "ps\psgitversion.ps1")
 . (Join-Path $BL.PsAutoHelpers "ps\ib-update-tools.ps1")
 
-# check Invoke-Build version
-IbUpdateIsNeeded $BL.ibVersionFile
+# Invoke-Build info
+Write-Output "Invoke-Build: Script file: $file"
+IbUpdateIsNeeded $BL.ibVersionFile | Out-Null
 
-$BL.BuildVersion = Get-GitVersion $psGitVersionStrategy 1 0 0 $buildCounter
+$BL.BuildVersion = Get-GitVersion $psGitVersionStrategy $major $minor $patch $buildCounter
 $buildMiscInfo = $BL.BuildVersion.AssemblyInformationalVersion
-Write-Output "Special $buildMiscInfo"
-Write-Output "Special `$BL values"
+Write-Output "`$BL values"
 $BL.GetEnumerator()| Sort-Object -Property name | Format-Table Name, Value -AutoSize
 
 try {
@@ -43,8 +46,8 @@ try {
 	& $BL.ib -File $BL.BuildScriptPath -Result Result  @args
 }
 catch {
-	Write $Result.Error
-	Write $_
+	Write-Output $Result.Error
+	Write-Output $_
 	exit 1 # Failure
 }
 
