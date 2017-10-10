@@ -5,7 +5,7 @@
 	This script create spacial variable $BL
 #>
 
-
+[CmdletBinding()]
 param(
 	$scriptFile = (Join-Path $PSScriptRoot ".build.ps1"),
 	[parameter(Mandatory=$false)] [int] $major = 0,
