@@ -5,12 +5,11 @@
 	This script create spacial variable $BL
 #>
 
-[CmdletBinding()]
 param(
 	$scriptFile = (Join-Path $PSScriptRoot ".build.ps1"),
-	[parameter(Mandatory=$false)] [int] $major = 0,
-	[parameter(Mandatory=$false)] [int] $minor = 0,
-	[parameter(Mandatory=$false)] [int] $patch = 0,
+	$major = 0,
+	$minor = 0,
+	$patch = 0,
 	$buildCounter = 0,
 	$psGitVersionStrategy = "standard"
 )
