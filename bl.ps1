@@ -7,7 +7,7 @@
 
 
 param(
-	$scriptFile = (Join-Path (Split-Path $PSScriptRoot -Parent) ".build.ps1"),
+	$scriptFile = (Join-Path $PSScriptRoot ".build.ps1"),
 	[parameter(Mandatory=$false)] [int] $major = 0,
 	[parameter(Mandatory=$false)] [int] $minor = 0,
 	[parameter(Mandatory=$false)] [int] $patch = 0,
