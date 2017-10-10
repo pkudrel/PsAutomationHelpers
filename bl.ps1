@@ -7,7 +7,7 @@
 
 
 param(
-	$file = (Join-Path (Split-Path $MyInvocation.MyCommand.Path -Parent) ".build.ps1"),
+	$scriptFile = (Join-Path (Split-Path $MyInvocation.MyCommand.Path -Parent) ".build.ps1"),
 	[parameter(Mandatory=$false)] [int] $major = 0,
 	[parameter(Mandatory=$false)] [int] $minor = 0,
 	[parameter(Mandatory=$false)] [int] $patch = 0,
@@ -23,7 +23,7 @@ $BL.RepoRoot = (Resolve-Path ( & git rev-parse --show-toplevel))
 $BL.BuildDateTime = ((Get-Date).ToUniversalTime().ToString("yyyy-MM-ddTHH:mm:ssZ"))
 $BL.ScriptsPath = (Split-Path $MyInvocation.MyCommand.Path -Parent)
 $BL.BuildOutPath = (Join-Path $BL.RepoRoot ".build" )
-$BL.BuildScriptPath = $file
+$BL.BuildScriptPath = $scriptFile
 $BL.PsAutoHelpers = (Join-Path $BL.ScriptsPath "vendor\ps-auto-helpers") 
 $BL.ib = (Join-Path $BL.ScriptsPath "vendor\ps-auto-helpers\tools\ib\Invoke-Build.ps1")
 $BL.ibVersionFile = (Join-Path $BL.ScriptsPath "vendor\ps-auto-helpers\tools\ib-version.txt")
@@ -33,7 +33,7 @@ $BL.ibVersionFile = (Join-Path $BL.ScriptsPath "vendor\ps-auto-helpers\tools\ib-
 . (Join-Path $BL.PsAutoHelpers "ps\ib-update-tools.ps1")
 
 # Invoke-Build info
-Write-Output "Invoke-Build: Script file: $file"
+Write-Output "Invoke-Build: Script file: $scriptFile"
 IbUpdateIsNeeded $BL.ibVersionFile | Out-Null
 
 $BL.BuildVersion = Get-GitVersion $psGitVersionStrategy $major $minor $patch $buildCounter
