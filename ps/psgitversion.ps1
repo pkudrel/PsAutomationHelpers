@@ -140,7 +140,7 @@ function Ensure-DirExists ($path){
 #>
 function Get-GitCommitNumber
 {
-    $commitNumber = Exec { git rev-list --all --count } "Cannot execute git log. Ensure that the current directory is a git repository and that git is available on PATH."
+    $commitNumber = & git rev-list --all --count
     return $commitNumber 
 }
 
@@ -190,9 +190,7 @@ function Get-LocalBuildNumber {
 #>
 function Get-GitRepoRoot
 {
-	 #$path = Exec { git rev-parse --show-toplevel } "Get-GitRepoRoot: Problem with git"
 	 $path = & git rev-parse --show-toplevel 
-	 
 	 return $path 
 }
 
@@ -207,7 +205,7 @@ function Get-GitRepoRoot
 #>
 function Get-GitCommitTimestamp
 {
-	$lastCommitLog = Exec { git log --max-count=1 --pretty=format:%cI HEAD } "Get-GitCommitTimestamp: Problem with git"
+	$lastCommitLog = & git log --max-count=1 --pretty=format:%cI HEAD 
 	$convertedDate = [DateTime]::Parse($lastCommitLog).ToUniversalTime().ToString("yyyy-MM-ddTHH:mm:ssZ");
     return $convertedDate
 }
@@ -218,7 +216,7 @@ function Get-GitCommitTimestamp
 #>
 function Get-GitCommitHash
 {
-    $lastCommitLog = Exec { git log --max-count=1 --pretty=format:%H HEAD } "Get-GitCommitHash: Problem with git"
+    $lastCommitLog = & git log --max-count=1 --pretty=format:%H HEAD 
     return $lastCommitLog
 }
 
@@ -228,9 +226,9 @@ function Get-GitCommitHash
 #>
 function Get-GitBranch
 {
-	 $revParse = Exec { git rev-parse --abbrev-ref HEAD } "Get-GitBranch rev-parse: Problem with git"
+	 $revParse = & git rev-parse --abbrev-ref HEAD 
 	 if ($revParse -ne "HEAD") { return $revParse } 
-	 $revParse = Exec { git symbolic-ref --short -q HEAD } "Get-GitBranch symbolic-ref: Problem with git"
+	 $revParse = & git symbolic-ref --short -q HEAD 
 	 if ($revParse -ne "HEAD") { return $revParse } 
 	 return "" 
 }
@@ -243,7 +241,7 @@ function Get-GitTag
 {
 	$describeTags = ""
 	try {
-		$describeTags = Exec { git for-each-ref refs/tags --sort=-taggerdate --format='%(refname:short)' --count=1 } "Get-GitTag: Problem with git"
+		$describeTags = & git git for-each-ref refs/tags --sort=-taggerdate --format='%(refname:short)' --count=1
 	}	
 	catch {
 	 
