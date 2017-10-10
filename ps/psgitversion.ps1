@@ -190,7 +190,9 @@ function Get-LocalBuildNumber {
 #>
 function Get-GitRepoRoot
 {
-	 $path = Exec { git rev-parse --show-toplevel } "Get-GitRepoRoot: Problem with git"
+	 #$path = Exec { git rev-parse --show-toplevel } "Get-GitRepoRoot: Problem with git"
+	 $path = & git rev-parse --show-toplevel 
+	 
 	 return $path 
 }
 
