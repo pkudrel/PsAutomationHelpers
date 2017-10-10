@@ -102,7 +102,7 @@ function Get-GitVersion() {
 
 
 #Borrowed from psake
-function Exec {
+function ExecLocal {
     [CmdletBinding()]
     param(
         [Parameter(Mandatory=$true, Position=0)][scriptblock]$Command,
@@ -111,7 +111,7 @@ function Exec {
 
     & $Command
     if ($LASTEXITCODE -ne 0) {
-        throw ("Exec: " + $ErrorMessage)
+        throw ("ExecLocal: " + $ErrorMessage)
     }
 }
 
@@ -140,7 +140,7 @@ function Ensure-DirExists ($path){
 #>
 function Get-GitCommitNumber
 {
-    $commitNumber = & git rev-list --all --count
+    $commitNumber = ExecLocal { git rev-list --all --count } "Cannot execute git log. Ensure that the current directory is a git repository and that git is available on PATH."
     return $commitNumber 
 }
 
@@ -190,7 +190,7 @@ function Get-LocalBuildNumber {
 #>
 function Get-GitRepoRoot
 {
-	 $path = & git rev-parse --show-toplevel 
+	 $path = ExecLocal { git rev-parse --show-toplevel } "Get-GitRepoRoot: Problem with git"
 	 return $path 
 }
 
@@ -205,7 +205,7 @@ function Get-GitRepoRoot
 #>
 function Get-GitCommitTimestamp
 {
-	$lastCommitLog = & git log --max-count=1 --pretty=format:%cI HEAD 
+	$lastCommitLog = ExecLocal { git log --max-count=1 --pretty=format:%cI HEAD } "Get-GitCommitTimestamp: Problem with git"
 	$convertedDate = [DateTime]::Parse($lastCommitLog).ToUniversalTime().ToString("yyyy-MM-ddTHH:mm:ssZ");
     return $convertedDate
 }
@@ -216,7 +216,7 @@ function Get-GitCommitTimestamp
 #>
 function Get-GitCommitHash
 {
-    $lastCommitLog = & git log --max-count=1 --pretty=format:%H HEAD 
+    $lastCommitLog = ExecLocal { git log --max-count=1 --pretty=format:%H HEAD } "Get-GitCommitHash: Problem with git"
     return $lastCommitLog
 }
 
@@ -226,9 +226,9 @@ function Get-GitCommitHash
 #>
 function Get-GitBranch
 {
-	 $revParse = & git rev-parse --abbrev-ref HEAD 
+	 $revParse = ExecLocal { git rev-parse --abbrev-ref HEAD } "Get-GitBranch rev-parse: Problem with git"
 	 if ($revParse -ne "HEAD") { return $revParse } 
-	 $revParse = & git symbolic-ref --short -q HEAD 
+	 $revParse = ExecLocal { git symbolic-ref --short -q HEAD } "Get-GitBranch symbolic-ref: Problem with git"
 	 if ($revParse -ne "HEAD") { return $revParse } 
 	 return "" 
 }
@@ -241,7 +241,7 @@ function Get-GitTag
 {
 	$describeTags = ""
 	try {
-		$describeTags = & git git for-each-ref refs/tags --sort=-taggerdate --format='%(refname:short)' --count=1
+		$describeTags = ExecLocal { git for-each-ref refs/tags --sort=-taggerdate --format='%(refname:short)' --count=1 } "Get-GitTag: Problem with git"
 	}	
 	catch {
 	 
