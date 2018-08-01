@@ -90,21 +90,21 @@ if ((Test-Path $PSScriptRoot) -and !(Test-Path $GIT_DIR)) {
 
 # Make sure DevHelpers directory exists
 if ((Test-Path $PSScriptRoot) -and !(Test-Path $DEV_HELPERS_DIR )) {
-    Write-Verbose -Message "Creating DevHelpers directory..."
+    Write-Host -Message "Creating DevHelpers directory..."
     New-Item -Path $DEV_HELPERS_DIR  -Type directory | out-null
 }
 
 
 # Make sure tools folder exists
 if ((Test-Path $PSScriptRoot) -and !(Test-Path $TOOLS_DIR)) {
-    Write-Verbose -Message "Creating tools directory..."
+    Write-Host -Message "Creating tools directory..."
     New-Item -Path $TOOLS_DIR -Type directory | out-null
 }
 
 
 # Try download NuGet.exe if not exists
 if (!(Test-Path $NUGET_EXE)) {
-    Write-Verbose -Message "Downloading NuGet.exe..."
+    Write-Host -Message "Downloading NuGet.exe..."
     try {
         $wc = GetProxyEnabledWebClient
         $wc.DownloadFile($NUGET_URL, $NUGET_EXE)
@@ -114,7 +114,7 @@ if (!(Test-Path $NUGET_EXE)) {
 }
 
 if (!(Test-Path $DEV_HELPERS_VERSION_FILE)) {
-    Write-Verbose -Message "Clone DevHelpers..."
+    Write-Host -Message "Clone DevHelpers..."
     Push-Location
     Set-Location $DEV_HELPERS_DIR
 
@@ -134,7 +134,7 @@ if (!(Test-Path $DEV_HELPERS_VERSION_FILE)) {
 
 # Make sure that packages.config exist.
 if (!(Test-Path $PACKAGES_CONFIG)) {
-    Write-Verbose -Message "Downloading packages.config..."
+    Write-Host -Message "Downloading packages.config..."
     try {
       #  $wc = GetProxyEnabledWebClient
        # $wc.DownloadFile("https://cakebuild.net/download/bootstrapper/packages", $PACKAGES_CONFIG)
@@ -148,14 +148,14 @@ if(-Not $SkipToolPackageRestore.IsPresent) {
     Set-Location $TOOLS_DIR
 
 
-    Write-Verbose -Message "Restoring tools from NuGet..."
+    Write-Host -Message "Restoring tools from NuGet..."
     $NuGetOutput = Invoke-Expression "&`"$NUGET_EXE`" install -ExcludeVersion -OutputDirectory `"$TOOLS_DIR`""
 
     if ($LASTEXITCODE -ne 0) {
         Throw "An error occurred while restoring NuGet tools."
     }
     
-    Write-Verbose -Message ($NuGetOutput | out-string)
+    Write-Host -Message ($NuGetOutput | out-string)
 
     Pop-Location
 }
@@ -177,6 +177,6 @@ $ENV:NUGET_EXE = $NUGET_EXE
 
 
 
-Write-Verbose -Message "Done"
+Write-Host -Message "Done"
 
 
