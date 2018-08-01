@@ -24,4 +24,4 @@ $message = "Version: $VERSION"
 &git push origin --tags
 &git push
 
-
+Write-Host "Done"

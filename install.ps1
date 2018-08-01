@@ -65,6 +65,7 @@ if(!$PSScriptRoot){
 $NUGET_URL = "https://dist.nuget.org/win-x86-commandline/latest/nuget.exe"
 $GIT_DIR = Join-Path $PSScriptRoot ".git"
 $TOOLS_DIR = Join-Path $PSScriptRoot "tools"
+$PACKAGES_CONFIG = Join-Path $TOOLS_DIR "packages.config"
 $NUGET_EXE = Join-Path $TOOLS_DIR "nuget.exe"
 $IB = Join-Path $TOOLS_DIR "Invoke-Build\tools\Invoke-Build.ps1"
 
@@ -92,6 +93,35 @@ if (!(Test-Path $NUGET_EXE)) {
         Throw "Could not download NuGet.exe."
     }
 }
+
+# Make sure that packages.config exist.
+if (!(Test-Path $PACKAGES_CONFIG)) {
+    Write-Verbose -Message "Downloading packages.config..."
+    try {
+        $wc = GetProxyEnabledWebClient
+        $wc.DownloadFile("https://cakebuild.net/download/bootstrapper/packages", $PACKAGES_CONFIG)
+    } catch {
+        Throw "Could not download packages.config."
+    }
+}
+# Restore tools from NuGet?
+if(-Not $SkipToolPackageRestore.IsPresent) {
+    Push-Location
+    Set-Location $TOOLS_DIR
+
+
+    Write-Verbose -Message "Restoring tools from NuGet..."
+    $NuGetOutput = Invoke-Expression "&`"$NUGET_EXE`" install -ExcludeVersion -OutputDirectory `"$TOOLS_DIR`""
+
+    if ($LASTEXITCODE -ne 0) {
+        Throw "An error occurred while restoring NuGet tools."
+    }
+    
+    Write-Verbose -Message ($NuGetOutput | out-string)
+
+    Pop-Location
+}
+
 
 # Other functions
 function DownloadNugetIfNotExists ($packageName, $dstDirectory, $checkFile) {
