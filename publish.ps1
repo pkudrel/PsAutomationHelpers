@@ -15,7 +15,7 @@ Write-Host "Version: $VERSION "
 
 
 $VERSION_FILE =  Join-Path $PSScriptRoot "VERSION"
-[System.IO.File]::WriteAllText($VERSION_FILE, $DATE_TEXT)
+[System.IO.File]::WriteAllText($VERSION_FILE, $VERSION)
 
 $message = "Version: $VERSION"
 &git add .
