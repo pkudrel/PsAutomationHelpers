@@ -12,7 +12,7 @@ $DIFF = $DATE -  ((Get-Date -Year $DATE.Year -Month 1 -Day 1 -Hour 0 -Minute 0 -
 $SECONDS = [math]::Round($DIFF.TotalMinutes)
 $VERSION = "1.$($DATE.Year).$SECONDS"
 
-$DATA = [PSCustomObject]  @{ "Date" = $DATE_TEXT ; "SemVer" = "$semVer"}
+$DATA = [PSCustomObject]  @{ "Date" = $DATE_TEXT ; "SemVer" = $VERSION }
 $DATA_JSON = $DATA | ConvertTo-Json
 Write-Host "Version: $VERSION "
 $VERSION_FILE =  Join-Path $PSScriptRoot "version.json"
