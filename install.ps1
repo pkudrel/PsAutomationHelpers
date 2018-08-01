@@ -124,7 +124,7 @@ if (!(Test-Path $DEV_HELPERS_VERSION_FILE)) {
         Copy-Item -Path bl.ps1 -Destination $BUILD_DIR
         Copy-Item -Path packages.config -Destination $TOOLS_DIR
         Copy-Item -Path ps -Destination $BUILD_DIR -Recurse
-        Remove-Item -recurse $DEV_HELPERS_DIR\* -Force -exclude VERSION
+        Remove-Item -recurse $DEV_HELPERS_DIR\* -Force -exclude version.json
     } catch {
         Throw "Could not download NuGet.exe."
     }
