@@ -12,6 +12,8 @@ param(
     $ibVersionFile = (Join-Path $toolsPath "ib-version.txt")
 )
 
+# github.com use only tsl2
+[Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
 
 
 . (Join-Path $scriptsPath "ps\ib-update-tools.ps1")
