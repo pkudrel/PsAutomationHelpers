@@ -66,7 +66,7 @@ $NUGET_URL = "https://dist.nuget.org/win-x86-commandline/latest/nuget.exe"
 $GIT_DIR = Join-Path $PSScriptRoot ".git"
 $TOOLS_DIR = Join-Path $PSScriptRoot "tools"
 $NUGET_EXE = Join-Path $TOOLS_DIR "nuget.exe"
-$IB = Join-Path $TOOLS_DIR "nuget1.exe"
+$IB = Join-Path $TOOLS_DIR "Invoke-Build\tools\Invoke-Build.ps1"
 
 
 if ((Test-Path $PSScriptRoot) -and !(Test-Path $GIT_DIR)) {
