@@ -162,8 +162,6 @@ function DownloadNugetIfNotExists ($packageName, $dstDirectory, $checkFile) {
 # Save nuget.exe path to environment to be available to child processed
 $ENV:NUGET_EXE = $NUGET_EXE
 
-DownloadNugetIfNotExists "Invoke-Build" $TOOLS_DIR $IB
-
 
 
 Write-Verbose -Message "Done"
