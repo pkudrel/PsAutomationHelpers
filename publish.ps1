@@ -21,6 +21,8 @@ $message = "Version: $VERSION"
 &git add .
 &git tag -a $VERSION -m $message
 &git commit -am $VERSION -m $message
+&git push 
 &git push origin --tags
+
 
 
