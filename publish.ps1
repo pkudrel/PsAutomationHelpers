@@ -19,10 +19,10 @@ $VERSION_FILE =  Join-Path $PSScriptRoot "version.json"
 [System.IO.File]::WriteAllText($VERSION_FILE, $DATA_JSON )
 
 $messageTag = "Version: $VERSION"
-$messageCommit = "Version: $DATE_TEXT"
+$messageCommit = "Date: $DATE_TEXT ; Version: $VERSION"
 &git add .
 &git commit -am $VERSION -m $messageCommit
-&git tag -a $VERSION -m $messageTag
+&git tag -a $VERSION -m $messageCommit
 &git push origin --tags
 &git push
 
