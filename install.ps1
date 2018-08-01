@@ -68,6 +68,11 @@ $TOOLS_DIR = Join-Path $PSScriptRoot "tools"
 $PACKAGES_CONFIG = Join-Path $TOOLS_DIR "packages.config"
 $NUGET_EXE = Join-Path $TOOLS_DIR "nuget.exe"
 $IB = Join-Path $TOOLS_DIR "Invoke-Build\tools\Invoke-Build.ps1"
+$DEV_HELPERS_DIR =  Join-Path $TOOLS_DIR "DevHelpers"
+$DEV_HELPERS_URL = "https://github.com/pkudrel/PsAutomationHelpers.git"
+$DEV_HELPERS_VERSION_FILE = Join-Path $DEV_HELPERS_DIR  "VERSION"
+
+##PsAutomationHelpers
 
 
 if ((Test-Path $PSScriptRoot) -and !(Test-Path $GIT_DIR)) {
@@ -94,12 +99,26 @@ if (!(Test-Path $NUGET_EXE)) {
     }
 }
 
+if (!(Test-Path $DEV_HELPERS_VERSION_FILE)) {
+    Write-Verbose -Message "Clone DevHelpers..."
+    Push-Location
+    Set-Location $DEV_HELPERS_DIR
+
+    try {
+        &git clone --depth=1 .
+    } catch {
+        Throw "Could not download NuGet.exe."
+    }
+    Pop-Location
+}
+
+
 # Make sure that packages.config exist.
 if (!(Test-Path $PACKAGES_CONFIG)) {
     Write-Verbose -Message "Downloading packages.config..."
     try {
-        $wc = GetProxyEnabledWebClient
-        $wc.DownloadFile("https://cakebuild.net/download/bootstrapper/packages", $PACKAGES_CONFIG)
+      #  $wc = GetProxyEnabledWebClient
+       # $wc.DownloadFile("https://cakebuild.net/download/bootstrapper/packages", $PACKAGES_CONFIG)
     } catch {
         Throw "Could not download packages.config."
     }
