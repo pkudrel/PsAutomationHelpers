@@ -80,12 +80,18 @@ if ((Test-Path $PSScriptRoot) -and !(Test-Path $GIT_DIR)) {
 
 }
 
+# Make sure DevHelpers directory exists
+if ((Test-Path $PSScriptRoot) -and !(Test-Path $DEV_HELPERS_DIR )) {
+    Write-Verbose -Message "Creating DevHelpers directory..."
+    New-Item -Path $DEV_HELPERS_DIR  -Type directory | out-null
+}
+
+
 # Make sure tools folder exists
 if ((Test-Path $PSScriptRoot) -and !(Test-Path $TOOLS_DIR)) {
     Write-Verbose -Message "Creating tools directory..."
     New-Item -Path $TOOLS_DIR -Type directory | out-null
 }
-
 
 
 # Try download NuGet.exe if not exists
