@@ -132,16 +132,7 @@ if (!(Test-Path $DEV_HELPERS_VERSION_FILE)) {
 }
 
 
-# Make sure that packages.config exist.
-if (!(Test-Path $PACKAGES_CONFIG)) {
-    Write-Host  "Downloading packages.config..."
-    try {
-      #  $wc = GetProxyEnabledWebClient
-       # $wc.DownloadFile("https://cakebuild.net/download/bootstrapper/packages", $PACKAGES_CONFIG)
-    } catch {
-        Throw "Could not download packages.config."
-    }
-}
+
 # Restore tools from NuGet?
 if(-Not $SkipToolPackageRestore.IsPresent) {
     Push-Location
@@ -149,7 +140,7 @@ if(-Not $SkipToolPackageRestore.IsPresent) {
 
 
     Write-Host  "Restoring tools from NuGet..."
-    $NuGetOutput = Invoke-Expression "&`"$NUGET_EXE`" install -ExcludeVersion -OutputDirectory `"$TOOLS_DIR`""
+    $NuGetOutput = Invoke-Expression "&`"$NUGET_EXE`" install  -OutputDirectory `"$TOOLS_DIR`""
 
     if ($LASTEXITCODE -ne 0) {
         Throw "An error occurred while restoring NuGet tools."
