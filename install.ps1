@@ -80,7 +80,6 @@ $DEV_HELPERS_DIR =  Join-Path $TOOLS_DIR "dev-helpers"
 $DEV_HELPERS_URL = "https://github.com/pkudrel/PsAutomationHelpers.git"
 $DEV_HELPERS_VERSION_FILE = Join-Path $DEV_HELPERS_DIR  "version.json"
 
-##PsAutomationHelpers
 
 
 if ((Test-Path $PSScriptRoot) -and !(Test-Path $GIT_DIR)) {
@@ -139,7 +138,6 @@ if(-Not $SkipToolPackageRestore.IsPresent) {
     Push-Location
     Set-Location $TOOLS_DIR
 
-
     Write-Host  "Restoring tools from NuGet..."
     $NuGetOutput = Invoke-Expression "&`"$NUGET_EXE`" install -ExcludeVersion  -OutputDirectory `"$TOOLS_DIR`""
 
@@ -154,20 +152,10 @@ if(-Not $SkipToolPackageRestore.IsPresent) {
 
 
 # Other functions
-function DownloadNugetIfNotExists ($packageName, $dstDirectory, $checkFile) {
-    $msg = "Package name: '$packageName'; Dst dir: '$dstDirectory'; Check file: '$checkFile'"
-    If (-not (Test-Path  $checkFile)){
-        Write-Host "$msg ; Check file not exists - processing"
-        & $NUGET_EXE install $packageName -excludeversion -outputdirectory $dstDirectory
-    } else {
-        Write-Host "$msg ; Check file exists - exiting"
-    }
-}
+
 
 # Save nuget.exe path to environment to be available to child processed
 $ENV:NUGET_EXE = $NUGET_EXE
-
-
 
 Write-Host  "Done"
 
