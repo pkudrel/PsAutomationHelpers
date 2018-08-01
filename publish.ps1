@@ -19,9 +19,8 @@ $VERSION_FILE =  Join-Path $PSScriptRoot "VERSION"
 
 $message = "Version: $VERSION"
 &git add .
-&git tag -a $VERSION -m $message
 &git commit -am $VERSION -m $message
-&git push 
+&git tag -a $VERSION -m $message
 &git push origin --tags
 
 
