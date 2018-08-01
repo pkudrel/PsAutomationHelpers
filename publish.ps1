@@ -13,10 +13,10 @@ $SECONDS = [math]::Round($DIFF.TotalMinutes)
 $VERSION = "1.$($DATE.Year).$SECONDS"
 
 $DATA = [PSCustomObject]  @{ "Date" = $DATE_TEXT ; "SemVer" = "$semVer"}
-
+$DATA_JSON = $DATA | ConvertTo-Json
 Write-Host "Version: $VERSION "
 $VERSION_FILE =  Join-Path $PSScriptRoot "version.json"
-[System.IO.File]::WriteAllText($VERSION_FILE, $DATA)
+[System.IO.File]::WriteAllText($VERSION_FILE, $DATA_JSON )
 
 $message = "Version: $VERSION"
 &git add .
