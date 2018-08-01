@@ -42,7 +42,12 @@ function MD5HashFile([string] $filePath)
     }
 }
 
+function EnsureDirExists ($path){
 
+    if((Test-Path $path) -eq 0) {
+        mkdir $path | out-null;
+    }
+}
 
 function GetProxyEnabledWebClient
 {
@@ -65,6 +70,9 @@ if(!$PSScriptRoot){
 $NUGET_URL = "https://dist.nuget.org/win-x86-commandline/latest/nuget.exe"
 $GIT_DIR = Join-Path $PSScriptRoot ".git"
 $TOOLS_DIR = Join-Path $PSScriptRoot "tools"
+$SRC_DIR = Join-Path $PSScriptRoot "src"
+$BUILD_DIR = Join-Path $SRC_DIR "build"
+
 $PACKAGES_CONFIG = Join-Path $TOOLS_DIR "packages.config"
 $NUGET_EXE = Join-Path $TOOLS_DIR "nuget.exe"
 $IB = Join-Path $TOOLS_DIR "Invoke-Build\tools\Invoke-Build.ps1"
@@ -112,6 +120,7 @@ if (!(Test-Path $DEV_HELPERS_VERSION_FILE)) {
 
     try {
         &git clone --depth=1 $DEV_HELPERS_URL .
+        EnsureDirExists $BUILD_DIR
     } catch {
         Throw "Could not download NuGet.exe."
     }
