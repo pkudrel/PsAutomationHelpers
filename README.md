@@ -23,3 +23,9 @@ git subtree pull --prefix=src/build/vendor/ps-auto-helpers ps-auto-helpers maste
 
 ```
 
+Install windows
+```
+Invoke-WebRequest https://github.com/pkudrel/PsAutomationHelpers/blob/master/install.ps1 -OutFile install.ps1
+```
+
+
