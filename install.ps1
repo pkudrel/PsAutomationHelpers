@@ -122,7 +122,7 @@ if (!(Test-Path $DEV_HELPERS_VERSION_FILE)) {
         &git clone --depth=1 $DEV_HELPERS_URL .
         EnsureDirExists $BUILD_DIR
         Copy-Item -Path bl.ps1 -Destination $BUILD_DIR
-        Copy-Item -Path ps -Destination $BUILD_DIR
+        Copy-Item -Path ps -Destination $BUILD_DIR -Recurse
         Remove-Item -recurse $DEV_HELPERS_DIR\* -Force -exclude VERSION
     } catch {
         Throw "Could not download NuGet.exe."
