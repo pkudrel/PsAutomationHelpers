@@ -76,9 +76,9 @@ $BUILD_DIR = Join-Path $SRC_DIR "build"
 $PACKAGES_CONFIG = Join-Path $TOOLS_DIR "packages.config"
 $NUGET_EXE = Join-Path $TOOLS_DIR "nuget.exe"
 $IB = Join-Path $TOOLS_DIR "Invoke-Build\tools\Invoke-Build.ps1"
-$DEV_HELPERS_DIR =  Join-Path $TOOLS_DIR "DevHelpers"
+$DEV_HELPERS_DIR =  Join-Path $TOOLS_DIR "dev-helpers"
 $DEV_HELPERS_URL = "https://github.com/pkudrel/PsAutomationHelpers.git"
-$DEV_HELPERS_VERSION_FILE = Join-Path $DEV_HELPERS_DIR  "VERSION"
+$DEV_HELPERS_VERSION_FILE = Join-Path $DEV_HELPERS_DIR  "version.json"
 
 ##PsAutomationHelpers
 
@@ -122,6 +122,7 @@ if (!(Test-Path $DEV_HELPERS_VERSION_FILE)) {
         &git clone --depth=1 $DEV_HELPERS_URL .
         EnsureDirExists $BUILD_DIR
         Copy-Item -Path bl.ps1 -Destination $BUILD_DIR
+        Copy-Item -Path .build.ps1 -Destination $BUILD_DIR
         Copy-Item -Path packages.config -Destination $TOOLS_DIR
         Copy-Item -Path ps -Destination $BUILD_DIR -Recurse
         Remove-Item -recurse $DEV_HELPERS_DIR\* -Force -exclude version.json
@@ -140,7 +141,7 @@ if(-Not $SkipToolPackageRestore.IsPresent) {
 
 
     Write-Host  "Restoring tools from NuGet..."
-    $NuGetOutput = Invoke-Expression "&`"$NUGET_EXE`" install  -OutputDirectory `"$TOOLS_DIR`""
+    $NuGetOutput = Invoke-Expression "&`"$NUGET_EXE`" install -ExcludeVersion  -OutputDirectory `"$TOOLS_DIR`""
 
     if ($LASTEXITCODE -ne 0) {
         Throw "An error occurred while restoring NuGet tools."

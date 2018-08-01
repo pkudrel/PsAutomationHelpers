@@ -22,9 +22,10 @@ $BL.RepoRoot = (Resolve-Path ( & git rev-parse --show-toplevel))
 $BL.BuildDateTime = ((Get-Date).ToUniversalTime().ToString("yyyy-MM-ddTHH:mm:ssZ"))
 $BL.ScriptsPath = (Split-Path $MyInvocation.MyCommand.Path -Parent)
 $BL.BuildOutPath = (Join-Path $BL.RepoRoot ".build" )
+$BL.ToolsPath = (Join-Path $BL.RepoRoot "tools" )
 $BL.BuildScriptPath = $scriptFile
 $BL.PsAutoHelpers = (Join-Path $BL.ScriptsPath "vendor\ps-auto-helpers") 
-$BL.ib = (Join-Path $BL.ScriptsPath "vendor\ps-auto-helpers\tools\ib\Invoke-Build.ps1")
+$BL.ib = (Join-Path $BL.ToolsPath  "vendor\ps-auto-helpers\tools\ib\Invoke-Build.ps1")
 $BL.ibVersionFile = (Join-Path $BL.ScriptsPath "vendor\ps-auto-helpers\tools\ib-version.txt")
 
 # import tools
