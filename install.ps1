@@ -111,5 +111,6 @@ DownloadNugetIfNotExists "Invoke-Build" $TOOLS_DIR $IB
 
 
 
+Write-Verbose -Message "Done"
 
 
