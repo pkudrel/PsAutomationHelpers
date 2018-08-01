@@ -53,16 +53,7 @@ function GetProxyEnabledWebClient
     return $wc
 }
 
-# Other functions
-function DownloadNugetIfNotExists ($nuget, $packageName, $dstDirectory, $checkFile) {
-    $msg = "Package name: '$packageName'; Dst dir: '$dstDirectory'; Check file: '$checkFile'"
-    If (-not (Test-Path  $checkFile)){
-        Write-Host "$msg ; Check file not exists - processing"
-        & $nuget install $packageName -excludeversion -outputdirectory $dstDirectory
-    } else {
-        Write-Host "$msg ; Check file exists - exiting"
-    }
-}
+
 
 
 Write-Host "Preparing to run build script..."
@@ -101,27 +92,23 @@ if (!(Test-Path $NUGET_EXE)) {
     }
 }
 
+# Other functions
+function DownloadNugetIfNotExists ($packageName, $dstDirectory, $checkFile) {
+    $msg = "Package name: '$packageName'; Dst dir: '$dstDirectory'; Check file: '$checkFile'"
+    If (-not (Test-Path  $checkFile)){
+        Write-Host "$msg ; Check file not exists - processing"
+        & $NUGET_EXE install $packageName -excludeversion -outputdirectory $dstDirectory
+    } else {
+        Write-Host "$msg ; Check file exists - exiting"
+    }
+}
+
 # Save nuget.exe path to environment to be available to child processed
 $ENV:NUGET_EXE = $NUGET_EXE
 
+DownloadNugetIfNotExists "Invoke-Build" $TOOLS_DIR $7zip
 
 
 
 
 
-
-# Build Cake arguments
-$cakeArguments = @("$Script");
-if ($Target) { $cakeArguments += "-target=$Target" }
-if ($Configuration) { $cakeArguments += "-configuration=$Configuration" }
-if ($Verbosity) { $cakeArguments += "-verbosity=$Verbosity" }
-if ($ShowDescription) { $cakeArguments += "-showdescription" }
-if ($DryRun) { $cakeArguments += "-dryrun" }
-if ($Experimental) { $cakeArguments += "-experimental" }
-if ($Mono) { $cakeArguments += "-mono" }
-$cakeArguments += $ScriptArgs
-
-# Start Cake
-Write-Host "Running build script..."
-&$CAKE_EXE $cakeArguments
-exit $LASTEXITCODE

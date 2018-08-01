@@ -25,7 +25,8 @@ git subtree pull --prefix=src/build/vendor/ps-auto-helpers ps-auto-helpers maste
 
 Install windows
 ```
-Invoke-WebRequest https://github.com/pkudrel/PsAutomationHelpers/blob/master/install.ps1 -OutFile install.ps1
+[Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
+Invoke-WebRequest https://raw.githubusercontent.com/pkudrel/PsAutomationHelpers/master/install.ps1 -OutFile install.ps1 ; ./install.ps1
 ```
 
 
