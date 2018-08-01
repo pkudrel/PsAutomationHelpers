@@ -105,7 +105,7 @@ if (!(Test-Path $DEV_HELPERS_VERSION_FILE)) {
     Set-Location $DEV_HELPERS_DIR
 
     try {
-        &git clone --depth=1 .
+        &git clone --depth=1 $DEV_HELPERS_URL .
     } catch {
         Throw "Could not download NuGet.exe."
     }
