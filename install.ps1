@@ -123,7 +123,12 @@ if (!(Test-Path $DEV_HELPERS_VERSION_FILE)) {
         Copy-Item -Path bl.ps1 -Destination $BUILD_DIR
         Copy-Item -Path example.build.ps1 -Destination $BUILD_DIR
         Copy-Item -Path packages.config -Destination $TOOLS_DIR
-        Remove-Item -recurse $DEV_HELPERS_DIR\* -Force -exclude version.json,ps\*
+        Get-ChildItem -Path $DEV_HELPERS_DIR -Force -Recurse |
+            Where-Object {$_.Name -notlike "version.json"}  |
+            Where-Object {$_.Fullname -notlike "$DEV_HELPERS_DIR\ps*"} |
+            # it's important because first we have to delete the files in the directory and then the directory itself
+            Sort-Object { $_.Fullname.length }  -Descending |
+            Remove-Item -Force
     } catch {
         Throw "Could not clone DevHelpers."
     }
