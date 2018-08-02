@@ -123,9 +123,9 @@ if (!(Test-Path $DEV_HELPERS_VERSION_FILE)) {
         Copy-Item -Path bl.ps1 -Destination $BUILD_DIR
         Copy-Item -Path example.build.ps1 -Destination $BUILD_DIR
         Copy-Item -Path packages.config -Destination $TOOLS_DIR
-        Remove-Item -recurse $DEV_HELPERS_DIR\* -Force -exclude version.json,ps
+        Remove-Item -recurse $DEV_HELPERS_DIR\* -Force -exclude version.json,ps\*
     } catch {
-        Throw "Could not download NuGet.exe."
+        Throw "Could not clone DevHelpers."
     }
     Pop-Location
 }
